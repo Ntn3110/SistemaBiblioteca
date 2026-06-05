@@ -5,6 +5,9 @@ import BackEnd.src.model.Livro;
 import BackEnd.src.model.Usuario;
 import BackEnd.src.repository.BibliotecaRepository;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -81,15 +84,40 @@ public class BibliotecaService {
         repository.registrarEmprestimo(usuarioId, livroId);
     }
 
+    public double calcularMulta(Emprestimo emprestimo) {
+        if(!emprestimo.getStatus().equals("emprestado")) {
+            return 0;
+        }
+        if (!LocalDate.now().isAfter(
+            emprestimo.getDataPrevistaDevolucao())) {
+                return 0;
+        }
+
+        long diasAtraso = ChronoUnit.DAYS.between(
+            emprestimo.getDataPrevistaDevolucao(), LocalDate.now());
+        return diasAtraso * 2.0;
+    }
+
     public void registrarDevolucao(long emprestimoId) throws SQLException {
         repository.registrarDevolucao(emprestimoId);
     }
 
     public List<Emprestimo> listarHistorico() throws SQLException {
-        return repository.listarEmprestimos();
+
+        List<Emprestimo> emprestimos = repository.listarEmprestimos();
+
+        for (Emprestimo emprestimo : emprestimos) {
+            emprestimo.setMulta(calcularMulta(emprestimo));
+        }
+        return emprestimos;
     }
 
     public List<Emprestimo> listarAtrasados() throws SQLException {
-        return repository.listarEmprestimosAtrasados();
+
+        List<Emprestimo> atrasados = repository.listarEmprestimosAtrasados();
+        for (Emprestimo emprestimo : atrasados) {
+            emprestimo.setMulta(calcularMulta(emprestimo));
+        }
+        return atrasados;
     }
 }
