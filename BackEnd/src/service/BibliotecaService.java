@@ -62,6 +62,9 @@ public class BibliotecaService {
         if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email do usuario e obrigatorio");
         }
+        if (usuario.getCPF() == null || usuario.getCPF().isBlank()) {
+            throw new IllegalArgumentException("CPF do usuario e obrigatorio");
+        }
 
         repository.cadastrarUsuario(usuario);
     }

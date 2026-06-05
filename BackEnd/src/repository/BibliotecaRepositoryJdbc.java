@@ -160,7 +160,8 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
                     resultado.getLong("id"),
                     resultado.getString("nome"),
                     resultado.getString("email"),
-                    resultado.getString("telefone")
+                    resultado.getString("telefone"),
+                    resultado.getString("CPF")
                 ));
             }
         }

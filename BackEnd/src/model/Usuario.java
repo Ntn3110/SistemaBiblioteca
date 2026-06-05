@@ -5,12 +5,14 @@ public class Usuario {
     private String nome;
     private String email;
     private String telefone;
+    private String CPF;
 
-    public Usuario(long id, String nome, String email, String telefone) {
+    public Usuario(long id, String nome, String email, String telefone, String CPF) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
+        this.CPF = CPF;
     }
 
     public long getId() {
@@ -27,5 +29,9 @@ public class Usuario {
 
     public String getTelefone() {
         return telefone;
+    }
+
+    public String getCPF() {
+        return CPF;
     }
 }
