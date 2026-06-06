@@ -32,3 +32,10 @@ CREATE TABLE public.emprestimos (
   CONSTRAINT emprestimos_usuario_fk FOREIGN KEY (usuario_id) REFERENCES public.usuarios(id),
   CONSTRAINT emprestimos_livro_fk FOREIGN KEY (livro_id) REFERENCES public.livros(id)
 );
+CREATE TABLE public.admins (
+  id bigint NOT NULL DEFAULT nextval('admins_id_seq'::regclass),
+  username text NOT NULL UNIQUE,
+  password text NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT admins_pkey PRIMARY KEY (id)
+);
