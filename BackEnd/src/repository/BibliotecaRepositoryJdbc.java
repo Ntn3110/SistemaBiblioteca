@@ -125,7 +125,7 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
     @Override
     public void cadastrarUsuario(Usuario usuario) throws SQLException {
         String sql = """
-            insert into usuarios (nome, email, telefone, senha)
+            insert into usuarios (nome, email, telefone, CPF)
             values (?, ?, ?, ?)
             """;
 
@@ -135,7 +135,7 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
             comando.setString(1, usuario.getNome());
             comando.setString(2, usuario.getEmail());
             comando.setString(3, usuario.getTelefone());
-            comando.setString(4, "senha_nao_utilizada");
+            comando.setString(4, usuario.getCPF());
 
             comando.executeUpdate();
         }
@@ -144,7 +144,7 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
     @Override
     public List<Usuario> listarUsuarios() throws SQLException {
         String sql = """
-            select id, nome, email, telefone
+            select id, nome, email, telefone, CPF
             from usuarios
             order by id
             """;
@@ -160,7 +160,8 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
                     resultado.getLong("id"),
                     resultado.getString("nome"),
                     resultado.getString("email"),
-                    resultado.getString("telefone")
+                    resultado.getString("telefone"),
+                    resultado.getString("CPF")
                 ));
             }
         }
@@ -177,8 +178,8 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
             """;
 
         String inserirEmprestimo = """
-            insert into emprestimos (usuario_id, livro_id, data_emprestimo, status)
-            values (?, ?, current_date, 'emprestado')
+            insert into emprestimos (usuario_id, livro_id, data_emprestimo, data_prevista_devolucao, status, multa)
+            values (?, ?, current_date, current_date + interval '14 days', 'emprestado', 0.0)
             """;
 
         try (Connection conexao = conexaoBanco.conectar()) {
@@ -268,7 +269,7 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
     @Override
     public List<Emprestimo> listarEmprestimos() throws SQLException {
         String sql = """
-            select id, usuario_id, livro_id, data_emprestimo, data_devolucao, status
+            select id, usuario_id, livro_id, data_emprestimo, data_prevista_devolucao, data_devolucao, status, multa
             from emprestimos
             order by id
             """;
@@ -279,7 +280,7 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
     @Override
     public List<Emprestimo> listarEmprestimosAtrasados() throws SQLException {
         String sql = """
-            select id, usuario_id, livro_id, data_emprestimo, data_devolucao, status
+            select id, usuario_id, livro_id, data_emprestimo, data_prevista_devolucao, data_devolucao, status, multa
             from emprestimos
             where status = 'emprestado'
             and data_emprestimo < current_date - interval '7 days'
@@ -304,8 +305,10 @@ public class BibliotecaRepositoryJdbc implements BibliotecaRepository {
                     resultado.getLong("usuario_id"),
                     resultado.getLong("livro_id"),
                     resultado.getDate("data_emprestimo").toLocalDate(),
+                    resultado.getDate("data_prevista_devolucao").toLocalDate(),
                     dataDevolucao == null ? null : dataDevolucao.toLocalDate(),
-                    resultado.getString("status")
+                    resultado.getString("status"),
+                    resultado.getDouble("multa")
                 ));
             }
         }

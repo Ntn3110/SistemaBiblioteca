@@ -26,7 +26,8 @@ public class JsonUtil {
             0,
             lerTexto(json, "nome"),
             lerTexto(json, "email"),
-            lerTexto(json, "telefone")
+            lerTexto(json, "telefone"),
+            lerTexto(json, "CPF")
         );
     }
 
@@ -65,7 +66,8 @@ public class JsonUtil {
                 .append("\"id\":").append(usuario.getId()).append(",")
                 .append("\"nome\":").append(texto(usuario.getNome())).append(",")
                 .append("\"email\":").append(texto(usuario.getEmail())).append(",")
-                .append("\"telefone\":").append(texto(usuario.getTelefone()))
+                .append("\"telefone\":").append(texto(usuario.getTelefone())).append(",")
+                .append("\"CPF\":").append(texto(usuario.getCPF()))
                 .append("}");
 
             if (i < usuarios.size() - 1) {
